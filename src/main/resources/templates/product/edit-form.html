@@ -11,29 +11,45 @@
 <div class="container mt-4">
   <h2>상품 수정</h2>
 
+<<<<<<< HEAD
   <form th:action="@{'/admin/products/edit/' + ${product.id}}" method="post" th:object="${product}">
 
     <!-- 글로벌 에러 -->
     <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
       <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
     </div>
+=======
+  <form th:action="@{'/admin/products/' + ${product.id}}" method="post" th:object="${product}">
+
+    <input type="hidden" name="_method" value="put"/>
+>>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
 
     <div class="mb-3">
       <label for="name" class="form-label">상품명</label>
       <input type="text" th:field="*{name}" class="form-control" id="name" required/>
+<<<<<<< HEAD
       <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}"></div>
+=======
+>>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
     </div>
 
     <div class="mb-3">
       <label for="price" class="form-label">가격</label>
+<<<<<<< HEAD
       <input type="number" th:field="*{price}" class="form-control" id="price" required/>
       <div th:if="${#fields.hasErrors('price')}" class="text-danger" th:errors="*{price}"></div>
+=======
+      <input type="number" th:field="*{price}" class="form-control" id="price" required min="0"/>
+>>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
     </div>
 
     <div class="mb-3">
       <label for="imageUrl" class="form-label">이미지 URL</label>
       <input type="text" th:field="*{imageUrl}" class="form-control" id="imageUrl" required/>
+<<<<<<< HEAD
       <div th:if="${#fields.hasErrors('imageUrl')}" class="text-danger" th:errors="*{imageUrl}"></div>
+=======
+>>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
     </div>
 
     <button type="submit" class="btn btn-primary">수정</button>

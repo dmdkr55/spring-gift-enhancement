@@ -56,7 +56,6 @@ public class ProductService {
 
         foundProduct.update(product.getName(), product.getPrice(), product.getImageUrl(),
             product.getNeedsMdApproval());
-
     }
 
     // 상품 삭제

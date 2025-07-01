@@ -39,6 +39,10 @@
           Edit</a>
         <form th:action="@{'/admin/products/delete/' + ${product.id}}" method="post"
               style="display:inline-block;" onsubmit="return confirm('삭제하시겠습니까?');">
+<<<<<<< HEAD
+=======
+          <input type="hidden" name="_method" value="delete"/>
+>>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
           <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
         </form>
       </td>

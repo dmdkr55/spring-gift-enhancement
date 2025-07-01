@@ -30,6 +30,7 @@ public class ProductAdminController {
         return "product/list"; // templates/product/list.html
     }
 
+
     @GetMapping("/new")
     public String showAddForm(Model model) {
         model.addAttribute("product", new Product());
