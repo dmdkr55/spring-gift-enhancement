@@ -25,4 +25,3 @@ CREATE TABLE wishlist
     CONSTRAINT fk_wishlist_product FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE,
     CONSTRAINT uc_member_product UNIQUE (member_id, product_id)
 );
-
