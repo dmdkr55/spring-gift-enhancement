@@ -9,7 +9,6 @@ CREATE TABLE product
 
 CREATE TABLE member
 (
-<<<<<<< HEAD
     id       BIGINT AUTO_INCREMENT PRIMARY KEY,
     email    VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL
@@ -36,9 +35,3 @@ values ('latte', 3000, 'http://latte.jpg', false);
 
 INSERT into product(name, price, imageUrl, needsMdApproval)
 values ('tea', 2500, 'http://icetea.jpg', false);
-=======
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
->>>>>>> ade5d96 (충남대학교 BE 김재혁 위시리스트 2단계 (#246))

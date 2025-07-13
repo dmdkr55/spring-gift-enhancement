@@ -1,6 +1,5 @@
 package gift.model;
 
-<<<<<<< HEAD
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,18 +19,6 @@ public class Member {
     private String email;
 
     @Column(name = "password", nullable = false)
-=======
-import jakarta.validation.constraints.NotBlank;
-
-public class Member {
-
-    private Long id;
-
-    @NotBlank(message = "이메일은 필수 입력 값입니다.")
-    private String email;
-
-    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
->>>>>>> ade5d96 (충남대학교 BE 김재혁 위시리스트 2단계 (#246))
     private String password;
 
     public Member() {
@@ -45,12 +32,7 @@ public class Member {
     }
 
     public Member(String email, String password) {
-<<<<<<< HEAD
         this(null, email, password);
-=======
-        this.email = email;
-        this.password = password;
->>>>>>> ade5d96 (충남대학교 BE 김재혁 위시리스트 2단계 (#246))
     }
 
     public Long getId() {

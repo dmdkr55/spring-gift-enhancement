@@ -41,35 +41,15 @@ public class ProductControllerTest {
 
     @Test
     void 상품_등록_성공() throws Exception {
-<<<<<<< HEAD
-<<<<<<< HEAD
         Product product = new Product();
         product.setName("아이스 아메리카노");
         product.setPrice(2500);
         product.setImageUrl("http://americano.jpg");
 
-=======
-        // given
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
-        Product product = new Product();
-        product.setName("아이스 아메리카노");
-        product.setPrice(2500);
-        product.setImageUrl("http://americano.jpg");
-
-<<<<<<< HEAD
-        // when & then
->>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
         mockMvc.perform(post("/api/products").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(product))).andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").exists()).andExpect(jsonPath("$.name").value("아이스 아메리카노"))
             .andExpect(jsonPath("$.price").value(2500))
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
             .andExpect(jsonPath("$.imageUrl").value("http://americano.jpg"));
     }
 
@@ -164,29 +144,13 @@ public class ProductControllerTest {
                 .content(objectMapper.writeValueAsString(product))).andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.messages[0]").value(
                 "가격은 음수가 될 수 없습니다."));
-<<<<<<< HEAD
-=======
-            .andExpect(jsonPath("$.imageUrl").value("americano.jpg"));
->>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
     }
 
     @Test
     void 전체_상품_조회() throws Exception {
         // given
-<<<<<<< HEAD
-<<<<<<< HEAD
         productRepository.save(new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
         productRepository.save(new Product(null, "아이스티", 3000, "http://iceTea.jpg"));
-=======
-        productRepository.save(new Product(null, "아이스 아메리카노", 2500, "americano.jpg"));
-        productRepository.save(new Product(null, "아이스티", 3000, "iceTea.jpg"));
->>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
-=======
-        productRepository.save(new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
-        productRepository.save(new Product(null, "아이스티", 3000, "http://iceTea.jpg"));
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
 
         // when & then
         mockMvc.perform(get("/api/products")).andExpect(status().isOk())
@@ -196,32 +160,14 @@ public class ProductControllerTest {
 
     @Test
     void 특정_상품_조회() throws Exception {
-<<<<<<< HEAD
-<<<<<<< HEAD
         Product saved = productRepository.save(
             new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
 
-=======
-        // given
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
-        Product saved = productRepository.save(
-            new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
-
-<<<<<<< HEAD
-        // when & then
->>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
         mockMvc.perform(get("/api/products/" + saved.getId())).andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("아이스 아메리카노"));
     }
 
     @Test
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
     void 존재하지_않는_상품_조회시_404_반환() throws Exception {
         Long fakeId = 999L;
 
@@ -229,33 +175,14 @@ public class ProductControllerTest {
     }
 
     @Test
-<<<<<<< HEAD
     void 상품_수정() throws Exception {
         Product saved = productRepository.save(
             new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
-=======
-    void 상품_수정() throws Exception {
-        Product saved = productRepository.save(
-            new Product(null, "아이스 아메리카노", 2500, "americano.jpg"));
->>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
-=======
-    void 상품_수정() throws Exception {
-        Product saved = productRepository.save(
-            new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
 
         Product updated = new Product();
         updated.setName("핫 아메리카노");
         updated.setPrice(2000);
-<<<<<<< HEAD
-<<<<<<< HEAD
         updated.setImageUrl("http://americano.jpg");
-=======
-        updated.setImageUrl("americano.jpg");
->>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
-=======
-        updated.setImageUrl("http://americano.jpg");
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
 
         mockMvc.perform(
                 put("/api/products/" + saved.getId()).contentType(MediaType.APPLICATION_JSON)
@@ -266,15 +193,7 @@ public class ProductControllerTest {
     @Test
     void 상품_삭제() throws Exception {
         Product saved = productRepository.save(
-<<<<<<< HEAD
-<<<<<<< HEAD
             new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
-=======
-            new Product(null, "아이스 아메리카노", 2500, "americano.jpg"));
->>>>>>> 88be3a1 (feat: 기본 코드 준비 (#58))
-=======
-            new Product(null, "아이스 아메리카노", 2500, "http://americano.jpg"));
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
 
         mockMvc.perform(delete("/api/products/" + saved.getId())).andExpect(status().isNoContent());
     }
