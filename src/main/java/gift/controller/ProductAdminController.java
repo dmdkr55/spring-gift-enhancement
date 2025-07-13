@@ -32,10 +32,6 @@ public class ProductAdminController {
         return "product/list"; // templates/product/list.html
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 55360c0 (충남대 BE 김재혁 1단계 - 유효성 검사 및 예외 처리 (#177))
     @GetMapping("/new")
     public String showAddForm(Model model) {
         model.addAttribute("product", new Product());
