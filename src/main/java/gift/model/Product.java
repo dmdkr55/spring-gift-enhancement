@@ -61,7 +61,6 @@ public class Product {
         this.needsMdApproval = needsMdApproval;
     }
 
-
     public Long getId() {
         return id;
     }
@@ -69,7 +68,6 @@ public class Product {
     public String getName() {
         return name;
     }
-
 
     public Integer getPrice() {
         return price;

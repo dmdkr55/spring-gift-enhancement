@@ -39,7 +39,6 @@ public class Wishlist {
 
     }
 
-
     public Wishlist(Member member, Product product, Integer quantity) {
         this(null, member, product, quantity);
     }

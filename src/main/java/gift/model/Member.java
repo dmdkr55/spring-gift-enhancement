@@ -22,6 +22,7 @@ public class Member {
     private String password;
 
     public Member() {
+
     }
 
     public Member(Long id, String email, String password) {
