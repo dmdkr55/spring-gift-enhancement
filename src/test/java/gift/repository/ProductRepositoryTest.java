@@ -60,8 +60,8 @@ public class ProductRepositoryTest {
     @Test
     void findAll() {
         // given
-        Product product1 = new Product("coffee", 2500, "https://coffee.jpg");
-        Product product2 = new Product("tea", 2000, "https://tea.jpg");
+        Product product1 = new Product("test_coffee", 2500, "https://test_coffee.jpg");
+        Product product2 = new Product("test_tea", 2000, "https://test_tea.jpg");
         productRepository.save(product1);
         productRepository.save(product2);
 
@@ -73,27 +73,27 @@ public class ProductRepositoryTest {
             () -> assertThat(members).hasSize(2),
             () -> assertThat(members)
                 .extracting(Product::getName)
-                .containsExactlyInAnyOrder("coffee", "tea")
+                .containsExactlyInAnyOrder("test_coffee", "test_tea")
         );
     }
 
     @Test
     void update() {
         // given
-        Product product = new Product("coffee", 2500, "https://coffee.jpg");
+        Product product = new Product("test_coffee", 2500, "https://test_coffee.jpg");
         Product savedProduct = productRepository.save(product);
 
         // when
-        savedProduct.update("latte", 3500, "https://latte.jpg", false);
+        savedProduct.update("test_tea", 3500, "https://test_tea.jpg", false);
 
         // then
         Product foundProduct = productRepository.findById(savedProduct.getId())
             .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         assertAll(
-            () -> assertThat(foundProduct.getName()).isEqualTo("latte"),
+            () -> assertThat(foundProduct.getName()).isEqualTo("test_tea"),
             () -> assertThat(foundProduct.getPrice()).isEqualTo(3500),
-            () -> assertThat(foundProduct.getImageUrl()).isEqualTo("https://latte.jpg")
+            () -> assertThat(foundProduct.getImageUrl()).isEqualTo("https://test_tea.jpg")
         );
     }
 
@@ -101,7 +101,7 @@ public class ProductRepositoryTest {
     @Test
     void deleteById() {
         // given
-        Product product = new Product("coffee", 2500, "https://coffee.jpg");
+        Product product = new Product("test_coffee", 2500, "https://test_coffee.jpg");
         Product savedProduct = productRepository.save(product);
 
         // when

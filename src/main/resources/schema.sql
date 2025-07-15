@@ -17,13 +17,13 @@ CREATE TABLE member
 CREATE TABLE wishlist
 (
     id        BIGINT AUTO_INCREMENT PRIMARY KEY,
-    memberId  BIGINT NOT NULL,
-    productId BIGINT NOT NULL,
+    member_id  BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
     quantity  INT    NOT NULL,
 
-    CONSTRAINT fk_wishlist_member FOREIGN KEY (memberId) REFERENCES member (id) ON DELETE CASCADE,
-    CONSTRAINT fk_wishlist_product FOREIGN KEY (productId) REFERENCES product (id) ON DELETE CASCADE,
-    CONSTRAINT uc_member_product UNIQUE (memberId, productId)
+    CONSTRAINT fk_wishlist_member FOREIGN KEY (member_id) REFERENCES member (id) ON DELETE CASCADE,
+    CONSTRAINT fk_wishlist_product FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE,
+    CONSTRAINT uc_member_product UNIQUE (member_id, product_id)
 );
 
 -- 테스트용 product
