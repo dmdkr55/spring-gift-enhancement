@@ -1,15 +1,24 @@
 package gift.model;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "Member")
 public class Member {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "이메일은 필수 입력 값입니다.")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
+    @Column(name = "password", nullable = false)
     private String password;
 
     public Member() {
@@ -23,8 +32,7 @@ public class Member {
     }
 
     public Member(String email, String password) {
-        this.email = email;
-        this.password = password;
+        this(null, email, password);
     }
 
     public Long getId() {

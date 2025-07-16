@@ -3,6 +3,8 @@ package gift.service;
 import gift.dto.LoginMemberDto;
 import gift.dto.WishRequest;
 import gift.dto.WishResponse;
+import gift.model.Member;
+import gift.model.Product;
 import gift.model.Wishlist;
 import gift.repository.WishlistRepository;
 import java.util.List;
@@ -25,35 +27,37 @@ public class WishlistService {
     }
 
     public WishResponse create(WishRequest request, LoginMemberDto memberDto) {
-        Long memberId = memberService.findByEmail(memberDto.getEmail()).getId();
-        Long productId = productService.getProduct(request.getProductId()).getId();
+        Member member = memberService.findByEmail(memberDto.getEmail());
+        Product product = productService.getProduct(request.getProductId());
 
-        Optional<Wishlist> existingWish = wishlistRepository.findByMemberIdAndProductId(memberId,
-            productId);
+        Optional<Wishlist> existingWish = wishlistRepository.findByMemberAndProduct(member,
+            product);
         if (existingWish.isPresent()) {
             throw new IllegalStateException("해당 상품은 이미 위시리스트에 존재합니다.");
         }
 
-        Wishlist wishlist = new Wishlist(memberId, productId, request.getQuantity());
+        Wishlist wishlist = new Wishlist(member, product, request.getQuantity());
         Wishlist saved = wishlistRepository.save(wishlist);
 
-        return new WishResponse(saved.getMemberId(), saved.getProductId(), saved.getQuantity());
+        return new WishResponse(saved.getMember().getId(), saved.getProduct().getId(), saved.getQuantity());
     }
 
     public List<WishResponse> findAllByMemberId(LoginMemberDto memberDto) {
-        Long memberId = memberService.findByEmail(memberDto.getEmail()).getId();
-        List<Wishlist> wishlists = wishlistRepository.findAll(memberId);
+        Member member = memberService.findByEmail(memberDto.getEmail());
+        List<Wishlist> wishlists = wishlistRepository.findAllByMember(member);
 
         return wishlists.stream()
-            .map(w -> new WishResponse(w.getMemberId(), w.getProductId(), w.getQuantity()))
+            .map(w -> new WishResponse(w.getMember().getId(), w.getProduct().getId(), w.getQuantity()))
             .collect(Collectors.toList());
     }
 
     public void deleteWishlist(LoginMemberDto memberDto, Long productId) {
-        Long memberId = memberService.findByEmail(memberDto.getEmail()).getId();
-        if (wishlistRepository.findByMemberIdAndProductId(memberId, productId).isEmpty()) {
+        Member member = memberService.findByEmail(memberDto.getEmail());
+        Product product = productService.getProduct(productId);
+
+        if (wishlistRepository.findByMemberAndProduct(member, product).isEmpty()) {
             throw new IllegalArgumentException("삭제할 위시리스트가 존재하지 않습니다.");
         }
-        wishlistRepository.delete(memberId, productId);
+        wishlistRepository.deleteByMemberAndProduct(member, product);
     }
 }

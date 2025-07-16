@@ -1,0 +1,117 @@
+package gift.repository;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import gift.model.Member;
+import gift.model.Product;
+import gift.model.Wishlist;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+@DataJpaTest
+class WishlistRepositoryTest {
+
+    @Autowired
+    WishlistRepository wishlistRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @BeforeEach
+    void setUp() {
+        productRepository.deleteAll(); // 테스트마다 DB 초기화
+    }
+
+    private Member saveMember() {
+        Member member = new Member("kim@naver.com", "1234");
+        return memberRepository.save(member);
+    }
+
+    private Product saveProduct() {
+        Product product = new Product("test_coffee", 2500, "https://test_coffee.jpg");
+        return productRepository.save(product);
+    }
+
+    @Test
+    void save() {
+        // given
+        Member member = saveMember();
+        Product product = saveProduct();
+        Wishlist expected = new Wishlist(member, product, 3);
+
+        // when
+        Wishlist actual = wishlistRepository.save(expected);
+
+        // then
+        assertAll(
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThat(actual.getMember().getId()).isEqualTo(expected.getMember().getId()),
+            () -> assertThat(actual.getProduct().getId()).isEqualTo(expected.getProduct().getId()),
+            () -> assertThat(actual.getQuantity()).isEqualTo(expected.getQuantity())
+        );
+    }
+
+    @Test
+    void findByMemberAndProduct() {
+        // given
+        Member member = saveMember();
+        Product product = saveProduct();
+        Wishlist expected = new Wishlist(member, product, 3);
+        Wishlist saved = wishlistRepository.save(expected);
+
+        // when
+        Wishlist actual = wishlistRepository.findByMemberAndProduct(member, product)
+            .orElseThrow(() -> new IllegalArgumentException("Wishlist not found"));
+
+        // then
+        assertAll(
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThat(actual.getMember().getId()).isEqualTo(expected.getMember().getId()),
+            () -> assertThat(actual.getProduct().getId()).isEqualTo(expected.getProduct().getId()),
+            () -> assertThat(actual.getQuantity()).isEqualTo(expected.getQuantity())
+        );
+    }
+
+    @Test
+    void findAllByMember() {
+        // given
+        Member member = saveMember();
+        Product product1 = saveProduct();
+        Product product2 = new Product("tea", 2000, "https://tea.jpg");
+        productRepository.save(product2);
+
+        // when
+        wishlistRepository.save(new Wishlist(member, product1, 3));
+        wishlistRepository.save(new Wishlist(member, product2, 1));
+
+        List<Wishlist> list = wishlistRepository.findAllByMember(member);
+
+        // then
+        assertThat(list).hasSize(2);
+    }
+
+    @Test
+    void deleteByMemberAndProduct() {
+        // given
+        Member member = saveMember();
+        Product product = saveProduct();
+        Wishlist wishlist = new Wishlist(member, product, 3);
+        wishlistRepository.save(wishlist);
+
+        // when
+        wishlistRepository.deleteByMemberAndProduct(member, product);
+
+        // then
+        Optional<Wishlist> afterDelete = wishlistRepository.findByMemberAndProduct(member, product);
+        assertThat(afterDelete).isEmpty();
+    }
+}
+

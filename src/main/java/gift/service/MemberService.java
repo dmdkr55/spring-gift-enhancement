@@ -10,8 +10,6 @@ import gift.dto.RegisterRequest;
 import gift.dto.TokenResponse;
 import gift.model.Member;
 import gift.repository.MemberRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
