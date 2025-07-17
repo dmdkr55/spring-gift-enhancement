@@ -29,7 +29,7 @@ public class MemberService {
     }
 
     public TokenResponse save(RegisterRequest request) {
-        if (memberRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (memberRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException(request.getEmail());
         }
 
