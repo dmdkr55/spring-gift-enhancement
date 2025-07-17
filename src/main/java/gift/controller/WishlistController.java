@@ -9,6 +9,7 @@ import gift.service.WishlistService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,8 +39,10 @@ public class WishlistController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<WishResponse>> findAll(@LoginMember LoginMemberDto memberDto) {
-        List<WishResponse> wishResponses = wishlistService.findAllByMemberId(memberDto);
+    public ResponseEntity<Page<WishResponse>> findAll(
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @LoginMember LoginMemberDto memberDto) {
+        Page<WishResponse> wishResponses = wishlistService.findAllByMemberId(page, memberDto);
         return ResponseEntity.status(HttpStatus.OK).body(wishResponses);
     }
 

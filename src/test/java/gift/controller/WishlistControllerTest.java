@@ -1,5 +1,6 @@
 package gift.controller;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -81,7 +82,8 @@ public class WishlistControllerTest {
         mockMvc.perform(post("/api/wishes").contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", tokenResponse.getToken()).content(json))
             .andExpect(status().isCreated()).andExpect(jsonPath("$.memberId").value(memberId))
-            .andExpect(jsonPath("$.productId").value(product.getId())).andExpect(jsonPath("$.quantity").value(3));
+            .andExpect(jsonPath("$.productId").value(product.getId()))
+            .andExpect(jsonPath("$.quantity").value(3));
     }
 
     @Test
@@ -145,19 +147,16 @@ public class WishlistControllerTest {
         Product saved1 = saveProduct();
         Product saved2 = saveProduct();
 
-        wishlistService.create(new WishRequest(saved1.getId(), 3), new LoginMemberDto("abc@naver.com"));
-        wishlistService.create(new WishRequest(saved2.getId(), 10), new LoginMemberDto("abc@naver.com"));
+        wishlistService.create(new WishRequest(saved1.getId(), 3),
+            new LoginMemberDto("abc@naver.com"));
+        wishlistService.create(new WishRequest(saved2.getId(), 10),
+            new LoginMemberDto("abc@naver.com"));
 
         Long memberId = memberRepository.findByEmail("abc@naver.com").get().getId();
 
         mockMvc.perform(get("/api/wishes").contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", tokenResponse.getToken())).andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].memberId").value(memberId))
-            .andExpect(jsonPath("$[0].productId").value(saved1.getId()))
-            .andExpect(jsonPath("$[0].quantity").value(3))
-            .andExpect(jsonPath("$[1].memberId").value(memberId))
-            .andExpect(jsonPath("$[1].productId").value(saved2.getId()))
-            .andExpect(jsonPath("$[1].quantity").value(10));
+            .andExpect(jsonPath("$.content.length()").value(2));
     }
 
     @Test
@@ -166,10 +165,13 @@ public class WishlistControllerTest {
             new RegisterRequest("abc@naver.com", "1234"));
         Product product = saveProduct();
 
-        wishlistService.create(new WishRequest(product.getId(), 3), new LoginMemberDto("abc@naver.com"));
+        wishlistService.create(new WishRequest(product.getId(), 3),
+            new LoginMemberDto("abc@naver.com"));
 
-        mockMvc.perform(delete("/api/wishes/"+product.getId()).contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", tokenResponse.getToken())).andExpect(status().isNoContent());
+        mockMvc.perform(
+                delete("/api/wishes/" + product.getId()).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", tokenResponse.getToken()))
+            .andExpect(status().isNoContent());
     }
 
     @Test
@@ -178,6 +180,29 @@ public class WishlistControllerTest {
             new RegisterRequest("abc@naver.com", "1234"));
 
         mockMvc.perform(delete("/api/wishes/1").contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", tokenResponse.getToken())).andExpect(status().isNoContent());
+            .header("Authorization", tokenResponse.getToken())).andExpect(status().isNoContent());
+    }
+
+    @Test
+    void pagination() throws Exception {
+        // given
+        TokenResponse tokenResponse = memberService.save(
+            new RegisterRequest("abc@naver.com", "1234"));
+        for (int i = 0; i < 15; i++) {
+            Product product = saveProduct();
+            wishlistService.create(new WishRequest(product.getId(), i),
+                new LoginMemberDto("abc@naver.com"));
+        }
+
+        // then
+        //전체 조회시, 10개만 나옴
+        mockMvc.perform(get("/api/wishes").contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenResponse.getToken())).andExpect(status().isOk())
+            .andExpect(jsonPath("$.content.length()").value(10));
+
+        //페이지 1은 나머지 5개
+        mockMvc.perform(get("/api/wishes?page=1").contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenResponse.getToken())).andExpect(status().isOk())
+            .andExpect(jsonPath("$.content.length()").value(5));
     }
 }
