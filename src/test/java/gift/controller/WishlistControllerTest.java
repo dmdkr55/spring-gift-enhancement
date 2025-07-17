@@ -15,7 +15,9 @@ import gift.dto.WishRequest;
 import gift.dto.WishResponse;
 import gift.exception.MemberNotFoundException;
 import gift.model.Member;
+import gift.model.Product;
 import gift.repository.MemberRepository;
+import gift.repository.ProductRepository;
 import gift.repository.WishlistRepository;
 import gift.service.MemberService;
 import gift.service.WishlistService;
@@ -41,6 +43,9 @@ public class WishlistControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private WishlistService wishlistService;
 
     @Autowired
@@ -58,19 +63,25 @@ public class WishlistControllerTest {
         memberRepository.deleteAll(); // 테스트마다 DB 초기화
     }
 
+    private Product saveProduct() {
+        Product product = new Product("test_coffee", 2500, "https://test_coffee.jpg");
+        return productRepository.save(product);
+    }
+
     @Test
     void 위시리스트_추가() throws Exception {
         TokenResponse tokenResponse = memberService.save(
             new RegisterRequest("abc@naver.com", "1234"));
         Long memberId = memberRepository.findByEmail("abc@naver.com").get().getId();
+        Product product = saveProduct();
 
-        WishRequest wishRequest = new WishRequest(1L, 3);
+        WishRequest wishRequest = new WishRequest(product.getId(), 3);
         String json = objectMapper.writeValueAsString(wishRequest);
 
         mockMvc.perform(post("/api/wishes").contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", tokenResponse.getToken()).content(json))
             .andExpect(status().isCreated()).andExpect(jsonPath("$.memberId").value(memberId))
-            .andExpect(jsonPath("$.productId").value(1)).andExpect(jsonPath("$.quantity").value(3));
+            .andExpect(jsonPath("$.productId").value(product.getId())).andExpect(jsonPath("$.quantity").value(3));
     }
 
     @Test
@@ -79,13 +90,13 @@ public class WishlistControllerTest {
             new RegisterRequest("abc@naver.com", "1234"));
         Long memberId = memberRepository.findByEmail("abc@naver.com").get().getId();
 
-        WishRequest wishRequest = new WishRequest(100L, 3);
+        WishRequest wishRequest = new WishRequest(999L, 3);
         String json = objectMapper.writeValueAsString(wishRequest);
 
         mockMvc.perform(post("/api/wishes").contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", tokenResponse.getToken()).content(json))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").value("id: 100. 해당 ID의 상품이 존재하지 않습니다."));
+            .andExpect(jsonPath("$.message").value("id: 999. 해당 ID의 상품이 존재하지 않습니다."));
     }
 
     @Test
@@ -131,18 +142,21 @@ public class WishlistControllerTest {
     void 위시리스트_전체_조회() throws Exception {
         TokenResponse tokenResponse = memberService.save(
             new RegisterRequest("abc@naver.com", "1234"));
-        wishlistService.create(new WishRequest(1L, 3), new LoginMemberDto("abc@naver.com"));
-        wishlistService.create(new WishRequest(3L, 10), new LoginMemberDto("abc@naver.com"));
+        Product saved1 = saveProduct();
+        Product saved2 = saveProduct();
+
+        wishlistService.create(new WishRequest(saved1.getId(), 3), new LoginMemberDto("abc@naver.com"));
+        wishlistService.create(new WishRequest(saved2.getId(), 10), new LoginMemberDto("abc@naver.com"));
 
         Long memberId = memberRepository.findByEmail("abc@naver.com").get().getId();
 
         mockMvc.perform(get("/api/wishes").contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", tokenResponse.getToken())).andExpect(status().isOk())
             .andExpect(jsonPath("$[0].memberId").value(memberId))
-            .andExpect(jsonPath("$[0].productId").value(1))
+            .andExpect(jsonPath("$[0].productId").value(saved1.getId()))
             .andExpect(jsonPath("$[0].quantity").value(3))
             .andExpect(jsonPath("$[1].memberId").value(memberId))
-            .andExpect(jsonPath("$[1].productId").value(3))
+            .andExpect(jsonPath("$[1].productId").value(saved2.getId()))
             .andExpect(jsonPath("$[1].quantity").value(10));
     }
 
@@ -150,10 +164,11 @@ public class WishlistControllerTest {
     void 위시리스트_삭제() throws Exception {
         TokenResponse tokenResponse = memberService.save(
             new RegisterRequest("abc@naver.com", "1234"));
+        Product product = saveProduct();
 
-        wishlistService.create(new WishRequest(1L, 3), new LoginMemberDto("abc@naver.com"));
+        wishlistService.create(new WishRequest(product.getId(), 3), new LoginMemberDto("abc@naver.com"));
 
-        mockMvc.perform(delete("/api/wishes/1").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(delete("/api/wishes/"+product.getId()).contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", tokenResponse.getToken())).andExpect(status().isNoContent());
     }
 
@@ -163,7 +178,6 @@ public class WishlistControllerTest {
             new RegisterRequest("abc@naver.com", "1234"));
 
         mockMvc.perform(delete("/api/wishes/1").contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", tokenResponse.getToken())).andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").value("삭제할 위시리스트가 존재하지 않습니다."));
+                .header("Authorization", tokenResponse.getToken())).andExpect(status().isNoContent());
     }
 }

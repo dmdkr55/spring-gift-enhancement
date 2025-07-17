@@ -113,5 +113,19 @@ class WishlistRepositoryTest {
         Optional<Wishlist> afterDelete = wishlistRepository.findByMemberAndProduct(member, product);
         assertThat(afterDelete).isEmpty();
     }
+
+    @Test
+    void 없는_위시리스트_삭제시_deleteByMemberAndProduct() {
+        // given
+        Member member = saveMember();
+        Product product = saveProduct();
+
+        // when
+        wishlistRepository.deleteByMemberAndProduct(member, product);
+
+        // then
+        Optional<Wishlist> afterDelete = wishlistRepository.findByMemberAndProduct(member, product);
+        assertThat(afterDelete).isEmpty();
+    }
 }
 
