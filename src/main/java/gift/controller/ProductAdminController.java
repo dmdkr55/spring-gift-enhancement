@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -25,8 +26,9 @@ public class ProductAdminController {
     }
 
     @GetMapping
-    public String showProductList(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+    public String showProductList(Model model,
+        @RequestParam(value = "page", defaultValue = "0") int page) {
+        model.addAttribute("products", productService.getAllProducts(page));
         return "product/list"; // templates/product/list.html
     }
 

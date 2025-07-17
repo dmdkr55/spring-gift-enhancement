@@ -3,8 +3,13 @@ package gift.service;
 import gift.model.Product;
 import gift.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,13 +33,16 @@ public class ProductService {
     }
 
     // 상품 전체 조회
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.asc("id"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return productRepository.findAllByNeedsMdApprovalFalse(pageable);
     }
 
     // 상품 단건 조회
     public Product getProduct(Long id) {
-        Optional<Product> product = productRepository.findById(id);
+        Optional<Product> product = productRepository.findByIdAndNeedsMdApprovalFalse(id);
         if (product.isEmpty()) {
             throw new IllegalArgumentException(
                 "id: " + id + ". 해당 ID의 상품이 존재하지 않습니다.");
@@ -60,9 +68,6 @@ public class ProductService {
 
     // 상품 삭제
     public void deleteProduct(Long id) {
-        if (productRepository.findById(id).isEmpty()) {
-            throw new IllegalArgumentException("삭제할 상품이 존재하지 않습니다.");
-        }
         productRepository.deleteById(id);
     }
 }
