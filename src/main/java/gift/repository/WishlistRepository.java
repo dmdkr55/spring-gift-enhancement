@@ -1,19 +1,14 @@
 package gift.repository;
 
-import gift.dto.WishResponse;
 import gift.model.Member;
 import gift.model.Product;
 import gift.model.Wishlist;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,7 +16,10 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 
     Optional<Wishlist> findByMemberAndProduct(Member member, Product product);
 
-    List<Wishlist> findAllByMember(Member member);
+    boolean existsByMemberAndProduct(Member member, Product product);
+
+    @Query("SELECT w FROM Wishlist w JOIN FETCH w.member JOIN FETCH w.product WHERE w.member = :member")
+    Page<Wishlist> findAllByMember(Pageable pageable, Member member);
 
     void deleteByMemberAndProduct(Member member, Product product);
 

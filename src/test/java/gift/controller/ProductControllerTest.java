@@ -1,5 +1,6 @@
 package gift.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -13,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.model.Product;
 import gift.repository.ProductRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,12 @@ public class ProductControllerTest {
     @BeforeEach
     void setUp() {
         productRepository.deleteAll(); // 테스트마다 DB 초기화
+    }
+
+
+    private Product saveProduct() {
+        Product product = new Product("test_coffee", 2500, "https://test_coffee.jpg");
+        return productRepository.save(product);
     }
 
     @Test
@@ -154,8 +162,7 @@ public class ProductControllerTest {
 
         // when & then
         mockMvc.perform(get("/api/products")).andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()", is(2)))
-            .andExpect(jsonPath("$[0].name", not(emptyString())));
+            .andExpect(jsonPath("$.content.length()", is(2)));
     }
 
     @Test
@@ -197,4 +204,22 @@ public class ProductControllerTest {
 
         mockMvc.perform(delete("/api/products/" + saved.getId())).andExpect(status().isNoContent());
     }
+
+    @Test
+    void pagination() throws Exception {
+        // given
+        for (int i = 0; i < 15; i++) {
+            saveProduct();
+        }
+
+        // when & then
+        //전체 조회시, 10개만 나옴
+        mockMvc.perform(get("/api/products")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.content.length()", is(10)));
+
+        //페이지 1은 나머지 5개
+        mockMvc.perform(get("/api/products?page=1")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.content.length()", is(5)));
+    }
+
 }

@@ -26,12 +26,3 @@ CREATE TABLE wishlist
     CONSTRAINT uc_member_product UNIQUE (member_id, product_id)
 );
 
--- 테스트용 product
-INSERT into product(name, price, imageUrl, needsMdApproval)
-values ('coffee', 2000, 'http://coffee.jpg', false);
-
-INSERT into product(name, price, imageUrl, needsMdApproval)
-values ('latte', 3000, 'http://latte.jpg', false);
-
-INSERT into product(name, price, imageUrl, needsMdApproval)
-values ('tea', 2500, 'http://icetea.jpg', false);

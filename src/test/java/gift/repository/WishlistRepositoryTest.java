@@ -6,12 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import gift.model.Member;
 import gift.model.Product;
 import gift.model.Wishlist;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @DataJpaTest
 class WishlistRepositoryTest {
@@ -85,17 +90,20 @@ class WishlistRepositoryTest {
         // given
         Member member = saveMember();
         Product product1 = saveProduct();
-        Product product2 = new Product("tea", 2000, "https://tea.jpg");
-        productRepository.save(product2);
+        Product product2 = saveProduct();
 
-        // when
         wishlistRepository.save(new Wishlist(member, product1, 3));
         wishlistRepository.save(new Wishlist(member, product2, 1));
 
-        List<Wishlist> list = wishlistRepository.findAllByMember(member);
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.asc("id"));
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(sorts));
+
+        // when
+        Page<Wishlist> wishlists = wishlistRepository.findAllByMember(pageable, member);
 
         // then
-        assertThat(list).hasSize(2);
+        assertThat(wishlists).hasSize(2);
     }
 
     @Test
@@ -105,6 +113,20 @@ class WishlistRepositoryTest {
         Product product = saveProduct();
         Wishlist wishlist = new Wishlist(member, product, 3);
         wishlistRepository.save(wishlist);
+
+        // when
+        wishlistRepository.deleteByMemberAndProduct(member, product);
+
+        // then
+        Optional<Wishlist> afterDelete = wishlistRepository.findByMemberAndProduct(member, product);
+        assertThat(afterDelete).isEmpty();
+    }
+
+    @Test
+    void 없는_위시리스트_삭제시_deleteByMemberAndProduct() {
+        // given
+        Member member = saveMember();
+        Product product = saveProduct();
 
         // when
         wishlistRepository.deleteByMemberAndProduct(member, product);
