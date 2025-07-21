@@ -43,15 +43,16 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String name, Integer price, String imageUrl) {
+    public Product(Long id, String name, Integer price, String imageUrl, boolean needsMdApproval) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
+        this.needsMdApproval = needsMdApproval;
     }
 
-    public Product(String name, Integer price, String imageUrl) {
-        this(null, name, price, imageUrl);
+    public Product(String name, Integer price, String imageUrl, boolean needsMdApproval) {
+        this(null, name, price, imageUrl, needsMdApproval);
     }
 
     public void update(String name, int price, String imageUrl, boolean needsMdApproval) {
@@ -95,10 +96,6 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public void setNeedsMdApproval(boolean needsMdApproval) {
-        this.needsMdApproval = needsMdApproval;
     }
 
 }
