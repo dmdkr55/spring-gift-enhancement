@@ -1,17 +1,14 @@
 package gift.model;
 
-import gift.validation.ValidProductName;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -21,24 +18,20 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "이름은 필수 입력 값입니다.")
-    @Size(max = 15, message = "이름은 15자까지 입력 가능합니다.")
-    @ValidProductName
     @Column(name = "name", nullable = false, length = 15)
     private String name;
 
-    @NotNull(message = "가격은 필수 입력 값입니다.")
-    @PositiveOrZero(message = "가격은 음수가 될 수 없습니다.")
     @Column(name = "price", nullable = false)
     private Integer price;
 
-    @NotBlank(message = "이미지 Url은 필수 입력 값입니다.")
-    @Pattern(regexp = "^https?:\\/\\/.*\\.(jpg|jpeg|png|gif|bmp|tiff)$", message = "imageUrl의 형식이 잘못되었습니다.")
     @Column(name = "imageUrl", nullable = false)
     private String imageUrl;
 
     @Column(name = "needsMdApproval", nullable = false)
     private boolean needsMdApproval;
+
+    @OneToMany
+    private List<Option> options = new ArrayList<>();
 
     public Product() {
     }

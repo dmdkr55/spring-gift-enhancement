@@ -46,7 +46,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProduct(@PathVariable Long id) {
         try {
-            ProductResponse response = productService.getProduct(id);
+            ProductResponse response = productService.getProductResponse(id);
             return ResponseEntity.ok(response); // 200 OK
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found

@@ -50,7 +50,7 @@ public class ProductAdminController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("product", productService.getProduct(id));
+        model.addAttribute("product", productService.getProductResponse(id));
         return "product/edit-form";
     }
 

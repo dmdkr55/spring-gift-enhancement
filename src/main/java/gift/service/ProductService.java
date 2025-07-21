@@ -52,7 +52,7 @@ public class ProductService {
     }
 
     // 상품 단건 조회
-    public ProductResponse getProduct(Long id) {
+    public ProductResponse getProductResponse(Long id) {
         Optional<Product> foundProduct = productRepository.findByIdAndNeedsMdApprovalFalse(id);
         if (foundProduct.isEmpty()) {
             throw new IllegalArgumentException(
@@ -62,6 +62,16 @@ public class ProductService {
         Product product = foundProduct.get();
         return new ProductResponse(product.getId(), product.getName(), product.getPrice(),
             product.getImageUrl(), product.getNeedsMdApproval());
+    }
+
+    public Product getProduct(Long id) {
+        Optional<Product> foundProduct = productRepository.findByIdAndNeedsMdApprovalFalse(id);
+        if (foundProduct.isEmpty()) {
+            throw new IllegalArgumentException(
+                "id: " + id + ". 해당 ID의 상품이 존재하지 않습니다.");
+        }
+
+        return foundProduct.get();
     }
 
     // 상품 수정
